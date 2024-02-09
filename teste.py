@@ -1,6 +1,8 @@
 import pandas as pd
 from tqdm import tqdm  # Importar tqdm para a barra de progresso
 
+#teste
+
 # Ler apenas a primeira linha do arquivo CSV
 primeira_linha = pd.read_csv('G:/Meu Drive/ProjetoAlemanha/Testes/df_features_halophily_pipeline2.2_merged.csv', nrows=2)
 
