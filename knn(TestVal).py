@@ -8,6 +8,7 @@ from sklearn.metrics import accuracy_score, classification_report
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+#Insert here the real path data
 df = pd.read_csv('df_salt_filtered-salinity_best_assembly - df_salt_filtered-salinity_best_assembly.csv')
 
 df.replace([np.inf, -np.inf], np.nan, inplace=True)
@@ -62,6 +63,7 @@ print(y)
 
 # Dividir o conjunto de dados em treino e teste
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
 # Dividir o conjunto de dados em treino (60%), teste (20%) e validação (20%)
 X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.4, random_state=42)
 X_test, X_val, y_test, y_val = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
@@ -174,7 +176,7 @@ plt.ylim(0, 1)  # Definir o limite do eixo y de 0 a 1 para representar a porcent
 plt.legend(loc='upper right')
 
 # Salvar o gráfico como um arquivo
-plt.savefig('performance_plot.png')
+plt.savefig('performance_plot_SVM.png')
 
 # Exibir o gráfico
 plt.show()
