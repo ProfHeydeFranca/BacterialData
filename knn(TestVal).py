@@ -8,7 +8,6 @@ from sklearn.metrics import accuracy_score, classification_report
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-#Insert here the real path data
 df = pd.read_csv('df_salt_filtered-salinity_best_assembly - df_salt_filtered-salinity_best_assembly.csv')
 
 df.replace([np.inf, -np.inf], np.nan, inplace=True)
@@ -63,7 +62,6 @@ print(y)
 
 # Dividir o conjunto de dados em treino e teste
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
 # Dividir o conjunto de dados em treino (60%), teste (20%) e validação (20%)
 X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.4, random_state=42)
 X_test, X_val, y_test, y_val = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
@@ -159,6 +157,20 @@ f1_score_test = f1_score(y_test, y_pred_test, average='weighted')
 print("Recall no conjunto de teste:", recall_test)
 print("F1-score no conjunto de teste:", f1_score_test)
 
+# Calcular o relatório de classificação para o conjunto de teste
+report_test = classification_report(y_test, y_pred_test)
+
+# Calcular o relatório de classificação para o conjunto de validação
+report_val = classification_report(y_val, y_pred_val)
+
+# Converter os relatórios de classificação em DataFrames do pandas
+df_report_test = pd.DataFrame(classification_report(y_test, y_pred_test, output_dict=True)).transpose()
+df_report_val = pd.DataFrame(classification_report(y_val, y_pred_val, output_dict=True)).transpose()
+
+# Salvar os DataFrames em arquivos CSV
+df_report_test.to_csv('classification_report_KNN_test.csv', index=True)
+df_report_val.to_csv('classification_report_KNN_validation.csv', index=True)
+
 # Criar um dataframe para facilitar o plot
 
 df = pd.DataFrame({
@@ -176,7 +188,7 @@ plt.ylim(0, 1)  # Definir o limite do eixo y de 0 a 1 para representar a porcent
 plt.legend(loc='upper right')
 
 # Salvar o gráfico como um arquivo
-plt.savefig('performance_plot_SVM.png')
+plt.savefig('performance_plot.png')
 
 # Exibir o gráfico
 plt.show()
