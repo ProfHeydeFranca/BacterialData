@@ -1,6 +1,19 @@
 import pandas as pd
 #from tqdm import tqdm  # Importar tqdm para a barra de progresso
 
+#Linhas sugeridas ############# INICIO
+
+#EXACT MATCH OPTION
+
+#Define 'Best assembly' as index of dataframe
+df_features['Best assembly'] = df_features.index
+df_salt['Best assembly'] = df_salt.index
+
+#Merge data with exact match
+df_features = df_features.merge(df_salt, left_index=True, right_index=True, how='outer')
+
+#Linhas sugeridas ############# FIM
+
 # Ler apenas a primeira linha do arquivo CSV
 #primeira_linha = pd.read_csv('/work/no58rok/bacterial_phenotypes_draco/df_features_objects/df_features_halophily_pipeline2.2_merged.csv', nrows=2)
 
