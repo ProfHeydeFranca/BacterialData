@@ -12,11 +12,11 @@ import h2o
 
 
 # Inicializar o H2O
+
 h2o.init()
 
-# Carregar os dados de Salinidade e features genomicas para o dataframe
-#Data_SalinityGen = h2o.upload_file("G:/Meu Drive/ProjetoAlemanha/Testes/dados_bacterias_com_genomas.csv")
-Data_SalinityGen = h2o.upload_file("G:\Meu Drive\ProjetoAlemanha\Testes\df_salt_filtered-salinity_best_assembly - df_salt_filtered-salinity_best_assembly.csv")
+# Carregar os dados de fatores abióticos e features genomicas para o dataframe
+Data_SalinityGen = h2o.upload_file("/work/groups/VEO/shared_data/bia_heyde/dados_bacterias_com_genomas_merge.csv")
 Data_SalinityGen.shape
 
 # Converter a coluna em um fator
