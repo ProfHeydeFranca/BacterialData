@@ -30,7 +30,7 @@ for model_name, model_class in models.items():
     model = model_class()
     params_grid = params[model_name]
     grid = H2OGridSearch(model, hyper_params=params_grid)
-    grid.train(x=data.col_names, y="target_column", training_frame=data)
+    grid.train(x=data.col_names, y="Salt_optimum",, training_frame=data)
     grid_searches[model_name] = grid
 
 # Analyze the results
