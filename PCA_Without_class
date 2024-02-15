@@ -5,11 +5,10 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 # Carregar os dados
-dados = pd.read_csv('seu_arquivo.csv')  # Substitua 'seu_arquivo.csv' pelo nome do seu arquivo CSV
+dados = pd.read_csv('/work/groups/VEO/shared_data/bia_heyde/df_features_halophily_pipeline2.2_merged.csv')
 
-# Separar os recursos (features) e as classes (labels), se houver
-X = dados.iloc[:, :-1].values  # Features
-y = dados.iloc[:, -1].values   # Labels, se houver
+# Atribuir todos os dados do arquivo CSV à variável X
+X = dados.values
 
 # Padronizar os dados
 scaler = StandardScaler()
@@ -32,7 +31,7 @@ resultado_pca.to_csv('resultado_pca.csv', index=False)
 
 # Plotar gráfico de visualização dos dados
 plt.figure(figsize=(8, 6))
-plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='viridis')
+plt.scatter(X_pca[:, 0], X_pca[:, 1], cmap='viridis')
 plt.xlabel('Componente Principal 1')
 plt.ylabel('Componente Principal 2')
 plt.title('Visualização dos Dados com PCA')
