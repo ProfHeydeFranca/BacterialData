@@ -7,6 +7,15 @@ from sklearn.preprocessing import StandardScaler
 # Carregar os dados
 dados = pd.read_csv('/work/groups/VEO/shared_data/bia_heyde/df_features_halophily_pipeline2.2_merged.csv')
 
+# Salvar IDs de amostra em uma variável separada
+sample_ids = dados['ID_da_amostra']
+
+# Remover colunas de IDs de amostra do conjunto de dados
+dados.drop(columns=['ID_da_amostra'], inplace=True)
+
+# Salvar IDs de amostra em um arquivo CSV separado
+sample_ids.to_csv("/home/wi38kap/BacterialData/arquivo_ids.csv", index=False)
+
 # Atribuir todos os dados do arquivo CSV à variável X
 X = dados.values
 
@@ -23,11 +32,11 @@ explained_variance_ratio = pca.explained_variance_ratio_
 
 # Salvar importância das variáveis em um arquivo CSV
 importancia_variaveis = pd.DataFrame(explained_variance_ratio, columns=['Importancia'])
-importancia_variaveis.to_csv('importancia_variaveis.csv', index=False)
+importancia_variaveis.to_csv('/home/wi38kap/BacterialData/importancia_variaveis.csv', index=False)
 
 # Salvar os resultados do PCA em um arquivo CSV
 resultado_pca = pd.DataFrame(X_pca, columns=[f'Componente Principal {i+1}' for i in range(X_pca.shape[1])])
-resultado_pca.to_csv('resultado_pca.csv', index=False)
+resultado_pca.to_csv('/home/wi38kap/BacterialData/resultado_pca.csv', index=False)
 
 # Plotar gráfico de visualização dos dados
 plt.figure(figsize=(8, 6))
@@ -37,7 +46,7 @@ plt.ylabel('Componente Principal 2')
 plt.title('Visualização dos Dados com PCA')
 plt.colorbar(label='Classe')
 plt.grid(True)
-plt.savefig('visualizacao_dados_pca.png')  # Salvar o gráfico como imagem
+plt.savefig('/home/wi38kap/BacterialData/visualizacao_dados_pca.png')  # Salvar o gráfico como imagem
 plt.show()
 
 # Plotar matriz de covariância
@@ -46,5 +55,5 @@ plt.figure(figsize=(8, 6))
 plt.imshow(covariance_matrix, cmap='viridis', interpolation='nearest')
 plt.colorbar()
 plt.title('Matriz de Covariância')
-plt.savefig('matriz_covariancia.png')  # Salvar a matriz de covariância como imagem
+plt.savefig('/home/wi38kap/BacterialData/matriz_covariancia.png')  # Salvar a matriz de covariância como imagem
 plt.show()
