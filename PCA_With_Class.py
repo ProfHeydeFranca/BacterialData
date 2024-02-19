@@ -57,6 +57,20 @@ plt.grid(True)
 plt.savefig('/home/wi38kap/BacterialData/visualizacao_dados_pca.png')  # Salvar o gráfico como imagem
 plt.show()
 
+
+# Plotar gráfico de visualização dos dados com cores diferentes para cada classe de salinidade
+plt.figure(figsize=(8, 6))
+for salinity_group in ['Low', 'Medium', 'High']:
+    plt.scatter(X_pca[y == salinity_group, 0], X_pca[y == salinity_group, 1], label=salinity_group)
+
+plt.xlabel('Componente Principal 1')
+plt.ylabel('Componente Principal 2')
+plt.title('Visualização dos Dados com PCA')
+plt.legend()
+plt.grid(True)
+plt.savefig('/home/wi38kap/BacterialData/visualizacao_dados_pca_colorido.png')  # Salvar o gráfico como imagem
+plt.show()
+
 # Plotar matriz de covariância
 covariance_matrix = np.cov(X_scaled.T)
 plt.figure(figsize=(8, 6))
