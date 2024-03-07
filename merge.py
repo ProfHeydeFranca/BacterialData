@@ -1,4 +1,7 @@
 import pandas as pd
+
+#This script was substituted by merge.ipynb in bacterial_phenotypes
+
 #Reading the data
 df_features = pd.read_csv('work/groups/VEO/shared_data/bia_heyde/df_features_halophily_pipeline2.2_merged.csv')
 df_salt = pd.read_csv('work/groups/VEO/shared_data/bia_heyde/df_salt_filtered-salinity_best_assembly_temp_pH_oxygen_merged_assemblies.csv')
