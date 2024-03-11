@@ -9,6 +9,6 @@
 #SBATCH --mem=400G
 
 source /home/groups/VEO/tools/anaconda3/etc/profile.d/conda.sh
-conda acvtivate /home/wi38kap/.conda/envs/bacterial_phenotypes
+conda activate /home/wi38kap/.conda/envs/bacterial_phenotypes
 
 python3 PCA_Without_class.py
