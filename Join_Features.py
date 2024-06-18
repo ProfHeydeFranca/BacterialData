@@ -1,45 +1,39 @@
 import pandas as pd
+import numpy as np
 
 # Carregar os dados
-#dados = pd.read_csv('/home/wi38kap/BacterialData/dados_bacterias_com_genomas_group_Sall.csv', nrows=3)
-dados = pd.read_csv(r'C:\Users\00pau\dados_bacterias_com_genomas_group_Sall.csv', nrows=3)
-#transformar dados categóricos
-print(dados.head())
+file_path = r'/home/wi38kap/BacterialData/df_filtered.pickle'
 
-# Drop the collumns with categorical data 
+# Ler o arquivo .pickle em um DataFrame
+df = pd.read_pickle(file_path)
 
-#dados['Halophily'] = dados['Halophily'].astype('category')
-#dados['Class'] = dados['Class'].astype('category')
-#dados['Species'] = dados['Species'].astype('category')
-dados = dados.drop(['Unnamed: 0', 'Halophily', 'Class', 'Species', 'Best assembly_y'], axis=1)
-#dados['Salinity group'] = dados['Salinity group'].fillna(0)
-dados = dados.fillna(0)
-# Lista de colunas que contêm dados de texto
+# Preencher valores faltantes
+df = df.fillna(0)
 
-#cols_with_text_data = ['Halophily', 'Class', 'Species', 'Best assembly_y']
+# Imprimir as duas primeiras linhas do DataFrame
+print("As duas primeiras linhas do DataFrame:")
+print(df.head(2))
 
-# Criar DataFrame codificado para variáveis categóricas
-#dados_encoded = pd.get_dummies(dados[cols_with_text_data])
+# Imprimir o formato do DataFrame
+print("\nFormato do DataFrame (número de linhas, número de colunas):")
+print(df.shape)
 
-# Remover as colunas originais do DataFrame 'dados'
-#dados = dados.drop(columns=cols_with_text_data)
+# Imprimir os tipos de dados das colunas do DataFrame
+print("\nTipos de dados das colunas:")
+print(df.dtypes)
 
-# Concatenar os DataFrames 'dados' e 'dados_encoded'
-#dados = pd.concat([dados, dados_encoded], axis=1)
+X = df.iloc[:, :-1] # All columns except the last one
+y = df.iloc[:, -1]   # Last column
 
-# Iterar sobre as colunas e verificar o tipo de dados de cada uma
-non_float_columns = []
-for column in dados.columns:
-    if dados[column].dtype != 'float64':
-        non_float_columns.append(column)
+# Map classes to numeric values
+class_mapping = {'low': 0, 'medium': 1, 'high': 2}
+y_mapped = y.map(class_mapping)
+print(y_mapped.head(2))
 
-# Imprimir as colunas que não contêm dados do tipo float
-print("Colunas que não contêm dados do tipo float:")
-for column_name in non_float_columns:
-    print(column_name)
-    
-# Calcular a matriz de correlação
-correlation_matrix = dados.corr()
+
+
+# Calcular a matriz de correlação para colunas numéricas
+correlation_matrix = X.corr()
 
 # Definir o limite de correlação para agrupamento
 threshold = 0.9
@@ -55,21 +49,37 @@ for col in correlation_matrix.columns:
         correlated_columns = correlation_matrix.index[correlation_matrix[col] > threshold].tolist()
         # Adicionar a coluna atual ao grupo
         column_groups[col] = correlated_columns
-        # Adicionar outras colunas ao grupo e marcar como já agrupadas
+        # Marcar outras colunas do grupo como já agrupadas
         for correlated_col in correlated_columns:
-            column_groups[correlated_col] = correlated_columns
+            if correlated_col != col:
+                column_groups[correlated_col] = correlated_columns
+
+# Filtrar grupos únicos de colunas
+unique_groups = []
+already_seen = set()
+for group in column_groups.values():
+    group_tuple = tuple(sorted(group))
+    if group_tuple not in already_seen:
+        unique_groups.append(group)
+        already_seen.add(group_tuple)
 
 # Criar um novo DataFrame para armazenar as colunas agrupadas
 dados_agrupados = pd.DataFrame()
 
 # Iterar sobre os grupos de colunas e calcular estatísticas resumidas
-for group, columns in column_groups.items():
-    # Calcular estatísticas resumidas para as colunas no grupo
-    group_data = dados[columns].agg(['mean', 'median', 'std']).T
-    # Adicionar o nome do grupo como prefixo para as estatísticas resumidas
-    group_data.columns = [f'{group}_{stat}' for stat in group_data.columns]
-    # Adicionar as estatísticas resumidas ao DataFrame agrupado
-    dados_agrupados = pd.concat([dados_agrupados, group_data], axis=1)
+for group in unique_groups:
+    # Usar a média das colunas no grupo como representação
+    group_mean = df[group].mean(axis=1)
+    group_name = f'Group_{group[0]}'
+    dados_agrupados[group_name] = group_mean
 
-# Salvar o DataFrame agrupado em um arquivo CSV
-dados_agrupados.to_csv('/home/wi38kap/BacterialData/dados_agrupados.csv', index=False)
+# Adicionar a coluna y ao DataFrame agrupado
+y = df.iloc[:, -1]  # Última coluna
+dados_agrupados['Target'] = y
+
+# Salvar o DataFrame agrupado em um arquivo pickle
+output_file_path = r'/home/wi38kap/BacterialData/Features_Corr_with_Target.pickle'
+dados_agrupados.to_pickle(output_file_path)
+
+# Verificação para garantir que o arquivo foi salvo corretamente
+print("DataFrame salvo como arquivo .pickle.")
