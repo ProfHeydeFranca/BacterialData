@@ -22,18 +22,16 @@ print(df.shape)
 print("\nTipos de dados das colunas:")
 print(df.dtypes)
 
-X = df.iloc[:, :-1] # All columns except the last one
-y = df.iloc[:, -1]   # Last column
+X = df.iloc[:, :-1] # Todas as colunas, exceto a última
+y = df.iloc[:, -1]  # Última coluna
 
-# Map classes to numeric values
+# Mapear classes para valores numéricos
 class_mapping = {'low': 0, 'medium': 1, 'high': 2}
 y_mapped = y.map(class_mapping)
 print(y_mapped.head(2))
 
-
-
-# Calcular a matriz de correlação para colunas numéricas
-correlation_matrix = X.corr()
+# Calcular a matriz de correlação para colunas numéricas usando Spearman
+correlation_matrix = X.corr(method='spearman')
 
 # Definir o limite de correlação para agrupamento
 threshold = 0.9
@@ -78,7 +76,7 @@ y = df.iloc[:, -1]  # Última coluna
 dados_agrupados['Target'] = y
 
 # Salvar o DataFrame agrupado em um arquivo pickle
-output_file_path = r'/home/wi38kap/BacterialData/Features_Corr_with_Target.pickle'
+output_file_path = r'/home/wi38kap/BacterialData/Features_Corr_Spearman_with_Target.pickle'
 dados_agrupados.to_pickle(output_file_path)
 
 # Verificação para garantir que o arquivo foi salvo corretamente
