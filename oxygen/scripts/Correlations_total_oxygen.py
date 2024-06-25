@@ -1,4 +1,6 @@
 #From feature_selection.ipynb
+#This script calculates Spearman correlations between genomic features
+#It outputs a dataframe of feature correlations and 2 histogram plots showing the distribution of correlation values
 
 import sys
 import pickle
