@@ -19,11 +19,15 @@ print()
 print("Started script! Loading input file...", datetime.datetime.now())
  
 #Input
-file1 = '/home/bia/Documents/bacterial_phenotypes/connecting_features_abFactors/df_oxygen_' + feature + '_selected-filterNA.pickle.zst'  
+#file1 = '/home/bia/Documents/bacterial_phenotypes/connecting_features_abFactors/df_oxygen_' + feature + '_selected-filterNA.pickle.zst'  
+file1 = '/work/groups/VEO/shared_data/bia_heyde/df_oxygen_' + feature + '_selected-filterNA.pickle.zst'  
 #Output
-file2 = '/home/bia/Documents/BacterialData/oxygen/data/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.pickle.zst'
-file3 = '/home/bia/Documents/BacterialData/oxygen/figures/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.png' 
-file4 = '/home/bia/Documents/BacterialData/oxygen/figures/spearman_corr_df_oxygen_' + feature + '_selected-filterNA_0.10gap.png'
+#file2 = '/home/bia/Documents/BacterialData/oxygen/data/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.pickle.zst'
+file2 = '/work/no58rok/BacterialData/oxygen/data/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.pickle.zst'
+file3 = '/work/no58rok/BacterialData/oxygen/figures/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.png' 
+#file3 = '/home/bia/Documents/BacterialData/oxygen/figures/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.png' 
+file4 = '/work/no58rok/BacterialData/oxygen/figures/spearman_corr_df_oxygen_' + feature + '_selected-filterNA_0.10gap.png'
+#file4 = '/home/bia/Documents/BacterialData/oxygen/figures/spearman_corr_df_oxygen_' + feature + '_selected-filterNA_0.10gap.png'
  
  
 with zstandard.open(file1, 'rb') as f:
