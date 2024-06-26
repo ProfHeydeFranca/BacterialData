@@ -26,10 +26,13 @@ print()
 print("Started script! Loading input files...", datetime.datetime.now())
 
 #Input
-file1 = '/home/bia/Documents/bacterial_phenotypes/connecting_features_abFactors/df_oxygen_' + feature + '_selected-filterNA.pickle.zst'
-file2 = '/home/bia/Documents/BacterialData/oxygen/data/spearman_corr_df_oxygen_' + feature +  '_selected-filterNA.pickle.zst'
+file1 = '/work/groups/VEO/shared_data/bia_heyde/df_oxygen_' + feature + '_selected-filterNA.pickle.zst'
+#file1 = '/home/bia/Documents/bacterial_phenotypes/connecting_features_abFactors/df_oxygen_' + feature + '_selected-filterNA.pickle.zst'
+file2 = '/work/no58rok/BacterialData/oxygen/data/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.pickle.zst'
+#file2 = '/home/bia/Documents/BacterialData/oxygen/data/spearman_corr_df_oxygen_' + feature +  '_selected-filterNA.pickle.zst'
 #Output
-file3 = '/home/bia/Documents/BacterialData/oxygen/data/Oxygen_' + feature +  '_Features_Corr_Spearman_with_Target.pickle.zst'
+file3 = '/work/no58rok/BacterialData/oxygen/data/Oxygen_' + feature +  '_Features_Corr_Spearman_with_Target.pickle.zst'
+#file3 = '/home/bia/Documents/BacterialData/oxygen/data/Oxygen_' + feature +  '_Features_Corr_Spearman_with_Target.pickle.zst'
 
 with zstandard.open(file1, 'rb') as f:
 #with zstandard.open(file2, 'rb') as f:
