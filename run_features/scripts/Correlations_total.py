@@ -12,28 +12,28 @@ import numpy as np
 from scipy.stats import rankdata
 
 #Get feature from command line
-if len(sys.argv) < 2:
-    print("Usage: python script.py <feature>")
+if len(sys.argv) < 3:
+    print("Usage: python script.py <feature> <abiotic_factor>")
     sys.exit(1)
 
 feature = sys.argv[1]
-
+abiotic_factor = sys.argv[2]
 
 print()
 
 print("Started script! Loading input file...", datetime.datetime.now())
  
 #Input
-#file1 = '/home/bia/Documents/bacterial_phenotypes/connecting_features_abFactors/df_oxygen_' + feature + '_selected-filterNA.pickle.zst'  
-file1 = '/work/groups/VEO/shared_data/bia_heyde/df_oxygen_' + feature + '_selected-filterNA.pickle.zst'  
+file1 = '/home/bia/Documents/bacterial_phenotypes/connecting_features_abFactors/df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'  
+#file1 = '/work/groups/VEO/shared_data/bia_heyde/df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'  
 #Output
-#file2 = '/home/bia/Documents/BacterialData/oxygen/data/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.pickle.zst'
-file2 = '/work/no58rok/BacterialData/oxygen/data/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.pickle.zst'
-#file3 = '/home/bia/Documents/BacterialData/oxygen/figures/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.png' 
-file3 = '/work/no58rok/BacterialData/oxygen/figures/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.png' 
-#file4 = '/home/bia/Documents/BacterialData/oxygen/figures/spearman_corr_df_oxygen_' + feature + '_selected-filterNA_0.10gap.png'
-file4 = '/work/no58rok/BacterialData/oxygen/figures/spearman_corr_df_oxygen_' + feature + '_selected-filterNA_0.10gap.png'
- 
+file2 = '/home/bia/Documents/BacterialData/run_features/oxygen/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'
+#file2 = '/work/no58rok/BacterialData/run_features/oxygen/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'
+file3 = '/home/bia/Documents/BacterialData/run_features/oxygen/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.png' 
+#file3 = '/work/no58rok/BacterialData/run_features/oxygen/data/spearman_corr_df_' + feature + '_selected-filterNA.png' 
+file4 = '/home/bia/Documents/BacterialData/run_features/oxygen/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA_0.10gap.png'
+#file4 = '/work/no58rok/BacterialData/run_features/oxygen/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA_0.10gap.png'
+
 with zstandard.open(file1, 'rb') as f:
 	df = pickle.load(f)
 
@@ -108,7 +108,7 @@ correlation_matrix = spearman_correlation(X)
 
 print(" Shape of the correlation matrix:", correlation_matrix.shape)
 
-print("Saving correlation dataframe...", datetime.datetime.now())
+print("Saving correlation dataframe...", file2, datetime.datetime.now())
 
 #Save calculations to file
 with zstandard.open(file2, 'wb') as f:
@@ -142,7 +142,7 @@ print(" Upper triangle squared minus number of features divided per two:", int( 
 #Visualize distribution of correlations
 import matplotlib.pyplot as plt
 
-print("Plotting all values...", datetime.datetime.now())
+print("Plotting all values in...", file3, datetime.datetime.now())
 
 # Plot the histogram full
 
@@ -156,7 +156,7 @@ plt.savefig(file3, dpi=300)
 
 # Plot the histogram without values close to 0
 
-print("Plotting values <= -0.1 or >= 0.1...", datetime.datetime.now())
+print("Plotting values <= -0.1 or >= 0.1 in...", file4, datetime.datetime.now())
 
 filtered_list = [value for value in cleaned_list if value <= -0.1 or value >= 0.1]
 
