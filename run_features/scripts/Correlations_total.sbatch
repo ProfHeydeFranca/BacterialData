@@ -1,13 +1,17 @@
 #!/bin/bash
 
-#SBATCH -J corr_GF
+#SBATCH -J corr_XX
 #SBATCH --partition=standard
 #SBATCH --ntasks=1
-#SBATCH --output  corr_GF.out.%j
-#SBATCH --error   corr_GF.err.%j
-#SBATCH --mem=10G
+#SBATCH --hint=nomultithread
+#SBATCH --output  corr_XX.out.%j
+#SBATCH --error   corr_XX.err.%j
+#SBATCH --mem=60G
 
-conda activate correlation
+module purge
+source /home/groups/VEO/tools/anaconda3/etc/profile.d/conda.sh
+conda activate /home/no58rok/tools/miniconda3/envs/correlation
 
-python3 Correlations_total.py gene-familiesTEST oxygen
+python3 Correlations_total.py XX XX
 
+conda deactivate
