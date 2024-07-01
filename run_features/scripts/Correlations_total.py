@@ -5,8 +5,11 @@
 import sys
 import pickle
 import zstandard
+import pandas as pd
 import numpy as np
 import datetime
+import numpy as np
+from scipy.stats import rankdata
 
 #Get feature from command line
 if len(sys.argv) < 2:
@@ -26,16 +29,15 @@ file1 = '/work/groups/VEO/shared_data/bia_heyde/df_oxygen_' + feature + '_select
 #Output
 #file2 = '/home/bia/Documents/BacterialData/oxygen/data/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.pickle.zst'
 file2 = '/work/no58rok/BacterialData/oxygen/data/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.pickle.zst'
-file3 = '/work/no58rok/BacterialData/oxygen/figures/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.png' 
 #file3 = '/home/bia/Documents/BacterialData/oxygen/figures/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.png' 
-file4 = '/work/no58rok/BacterialData/oxygen/figures/spearman_corr_df_oxygen_' + feature + '_selected-filterNA_0.10gap.png'
+file3 = '/work/no58rok/BacterialData/oxygen/figures/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.png' 
 #file4 = '/home/bia/Documents/BacterialData/oxygen/figures/spearman_corr_df_oxygen_' + feature + '_selected-filterNA_0.10gap.png'
- 
+file4 = '/work/no58rok/BacterialData/oxygen/figures/spearman_corr_df_oxygen_' + feature + '_selected-filterNA_0.10gap.png'
  
 with zstandard.open(file1, 'rb') as f:
 	df = pickle.load(f)
 
-#Calculate Spearman correlation########################################
+#Prepare data##########################################################
 
 print(" Shape of the input dataframe:", df.shape)
 
@@ -44,13 +46,65 @@ print(" Shape of the input dataframe:", df.shape)
 X = df.iloc[:, :-1]  
 y = df.iloc[:, -1] 
 
+#Remove zero-variance features#########################################
+#NEW BLOCK TO REMOVE ZERO-VARIANCE FEATURES
+
+print("Removing zero-variance features...", datetime.datetime.now())
+
+#Calculate variance for each feature/column
+variances = X.var()
+
+#Identify columns with zero variance
+zero_variance_columns = variances[variances == 0].index
+#print(zero_variance_columns)
+
+print("Number of zero-variance features:", len(zero_variance_columns), ', or:', round( (len(zero_variance_columns)/len(X))*100, 1 ), '% of the total of features')
+
+#Drop zero-variance features
+X = X.drop(columns=zero_variance_columns)
+
+print(" Shape of dataframe without zero-variance features:", X.shape)
+print(" Any NAs in the dataframe?", X.isnull().any().any() )
+
+
+
 #Make plot title (plot is below)
 plot_title = 'Correlation of prokaryotes\' ' + feature + ' (oxygen), n = ' + str(len(X.columns))
 
+#Calculate Spearman correlation########################################
+
 print("Calculating Spearman correlation...", datetime.datetime.now())
 
+############################ pandas calculation, very slow
 # Calcular a correlação de Spearman
-correlation_matrix = X.corr(method='spearman')
+#correlation_matrix = X.corr(method='spearman')
+
+############################ ChatGPT: Spearman correlation using numpy for more efficiency
+
+#Function to calculate Spearman's rank correlation using numpy
+def spearman_correlation(data):
+
+    # Save column names
+    column_names = data.columns
+    
+    # Rank the data
+    ranked_data = np.apply_along_axis(rankdata, 0, data)
+    
+    # Calculate the Pearson correlation on the ranked data
+    ranked_data -= ranked_data.mean(axis=0)  # Center the data by subtracting the mean
+    cov_matrix = np.dot(ranked_data.T, ranked_data) / (ranked_data.shape[0] - 1)
+    std_devs = np.sqrt(np.diag(cov_matrix))
+    spearman_corr = cov_matrix / np.outer(std_devs, std_devs)
+
+    # Convert the correlation matrix to a DataFrame
+    spearman_corr_df = pd.DataFrame(spearman_corr, columns=column_names, index=column_names)
+    
+    return spearman_corr_df
+
+correlation_matrix = spearman_correlation(X)
+
+############################
+
 
 print(" Shape of the correlation matrix:", correlation_matrix.shape)
 
@@ -113,4 +167,5 @@ plt.xlabel('Sperman\'s rank correlation value');
 plt.ylabel('Number of correlated pairs');
 plt.savefig(file4, dpi=300)  
 
+print("Finished script!", datetime.datetime.now())
 print()
