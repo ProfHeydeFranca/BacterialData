@@ -79,54 +79,66 @@ print("Calculating Spearman correlation...", datetime.datetime.now())
 # Calcular a correlação de Spearman
 #correlation_matrix = X.corr(method='spearman')
 
-############################ ChatGPT: Spearman correlation using numpy for more efficiency
+############################ ChatGPT: Spearman correlation using numpy for more efficiency, segmentation fault with large kmer input
 
 #Function to calculate Spearman's rank correlation using numpy
-def spearman_correlation(data):
+#def spearman_correlation(data):
     
     # Save column names
-    column_names = data.columns
+#    column_names = data.columns
 
-    print("Part 1")
+#    print("Part 1")
     
     # Rank the data
-    ranked_data = np.apply_along_axis(rankdata, 0, data)
+#    ranked_data = np.apply_along_axis(rankdata, 0, data)
 
-    print("Part 2")
+#    print("Part 2")
     
     # Calculate the Pearson correlation on the ranked data
-    ranked_data -= ranked_data.mean(axis=0)  # Center the data by subtracting the mean
+#    ranked_data -= ranked_data.mean(axis=0)  # Center the data by subtracting the mean
 
-    print("Part 3")
+#    print("Part 3")
     #print("Part 3", ranked_data[0:3])
-    print("Part 3.1")
+#    print("Part 3.1")
 
-    tmp = np.dot(ranked_data.T, ranked_data)
+#    tmp = np.dot(ranked_data.T, ranked_data)
 
-    print("Part 3.2")
+#    print("Part 3.2")
 
-    cov_matrix = tmp / (ranked_data.shape[0] - 1)
+#    cov_matrix = tmp / (ranked_data.shape[0] - 1)
     
 #    cov_matrix = np.dot(ranked_data.T, ranked_data) / (ranked_data.shape[0] - 1)
 
-    print("Part 4", cov_matrix[0:3], ranked_data.shape[0])
+#    print("Part 4", cov_matrix[0:3], ranked_data.shape[0])
     
-    std_devs = np.sqrt(np.diag(cov_matrix))
+#    std_devs = np.sqrt(np.diag(cov_matrix))
 
-    print("Part 5")
+#    print("Part 5")
     
-    spearman_corr = cov_matrix / np.outer(std_devs, std_devs)
+#    spearman_corr = cov_matrix / np.outer(std_devs, std_devs)
 
-    print("Part 6")
+#    print("Part 6")
     
     # Convert the correlation matrix to a DataFrame
-    spearman_corr_df = pd.DataFrame(spearman_corr, columns=column_names, index=column_names)
+#    spearman_corr_df = pd.DataFrame(spearman_corr, columns=column_names, index=column_names)
 
-    print("Part 7")
+#    print("Part 7")
     
-    return spearman_corr_df
+#    return spearman_corr_df
 
-correlation_matrix = spearman_correlation(X)
+#correlation_matrix = spearman_correlation(X)
+
+############################ ChatGPT: Spearman correlation using scipy.stats (which uses numpy internally)
+
+#import pandas as pd
+#from scipy.stats import spearmanr
+
+# Calculate Spearman correlation
+corr, _ = spearmanr(X)
+
+# Convert to DataFrame
+column_names = X.columns
+correlation_matrix = pd.DataFrame(corr, columns=column_names, index=column_names)
 
 ############################
 
