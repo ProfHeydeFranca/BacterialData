@@ -76,10 +76,12 @@ plot_title = 'Correlation of prokaryotes\' ' + feature + ' (oxygen), n = ' + str
 
 print("Calculating Spearman correlation...", datetime.datetime.now())
 
+#Approach 1 - slow
 ############################ pandas calculation, very slow
 # Calcular a correlação de Spearman
 #correlation_matrix = X.corr(method='spearman')
 
+#Approach 2 - segFault with large input
 ############################ ChatGPT: Spearman correlation using numpy for more efficiency, segmentation fault with large kmer input
 
 #Function to calculate Spearman's rank correlation using numpy
@@ -89,46 +91,39 @@ print("Calculating Spearman correlation...", datetime.datetime.now())
 #    column_names = data.columns
 
 #    print("Part 1")
-    
     # Rank the data
 #    ranked_data = np.apply_along_axis(rankdata, 0, data)
 
 #    print("Part 2")
-    
     # Calculate the Pearson correlation on the ranked data
 #    ranked_data -= ranked_data.mean(axis=0)  # Center the data by subtracting the mean
 
 #    print("Part 3")
     #print("Part 3", ranked_data[0:3])
 #    print("Part 3.1")
-
 #    tmp = np.dot(ranked_data.T, ranked_data)
 
 #    print("Part 3.2")
-
 #    cov_matrix = tmp / (ranked_data.shape[0] - 1)
-    
-#    cov_matrix = np.dot(ranked_data.T, ranked_data) / (ranked_data.shape[0] - 1)
+ 
+####    cov_matrix = np.dot(ranked_data.T, ranked_data) / (ranked_data.shape[0] - 1)
 
-#    print("Part 4", cov_matrix[0:3], ranked_data.shape[0])
-    
+#    print("Part 4", cov_matrix[0:3], ranked_data.shape[0])    
 #    std_devs = np.sqrt(np.diag(cov_matrix))
 
 #    print("Part 5")
-    
 #    spearman_corr = cov_matrix / np.outer(std_devs, std_devs)
 
 #    print("Part 6")
-    
     # Convert the correlation matrix to a DataFrame
 #    spearman_corr_df = pd.DataFrame(spearman_corr, columns=column_names, index=column_names)
 
 #    print("Part 7")
-    
 #    return spearman_corr_df
 
 #correlation_matrix = spearman_correlation(X)
 
+#Approach 3 - on use
 ############################ ChatGPT: Spearman correlation using scipy.stats (which uses numpy internally)
 
 #import pandas as pd
