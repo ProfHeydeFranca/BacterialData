@@ -70,7 +70,7 @@ print(" Any NAs in the dataframe?", X.isnull().any().any() )
 
 
 #Make plot title (plot is below)
-plot_title = 'Correlation of prokaryotes\' ' + feature + ' (oxygen), n = ' + str(len(X.columns))
+plot_title = 'Correlation of prokaryotes\' ' + feature + ' (' + abiotic_factor + '), n = ' + str(len(X.columns))
 
 #Calculate Spearman correlation########################################
 
