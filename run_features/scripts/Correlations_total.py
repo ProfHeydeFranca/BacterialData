@@ -58,7 +58,7 @@ variances = X.var()
 zero_variance_columns = variances[variances == 0].index
 #print(zero_variance_columns)
 
-print("Number of zero-variance features:", len(zero_variance_columns), ', or:', round( (len(zero_variance_columns)/len(X))*100, 1 ), '% of the total of features')
+print("Number of zero-variance features:", len(zero_variance_columns), ', or:', round( (len(zero_variance_columns)/len(X.columns))*100, 1 ), '% of the total of features')
 
 #Drop zero-variance features
 X = X.drop(columns=zero_variance_columns)
@@ -84,20 +84,37 @@ print("Calculating Spearman correlation...", datetime.datetime.now())
 #Function to calculate Spearman's rank correlation using numpy
 def spearman_correlation(data):
 
+    print("Part 1")
+    
     # Save column names
     column_names = data.columns
     
     # Rank the data
     ranked_data = np.apply_along_axis(rankdata, 0, data)
+
+    print("Part 2")
     
     # Calculate the Pearson correlation on the ranked data
     ranked_data -= ranked_data.mean(axis=0)  # Center the data by subtracting the mean
+
+    print("Part 3")
+    
     cov_matrix = np.dot(ranked_data.T, ranked_data) / (ranked_data.shape[0] - 1)
+
+    print("Part 3")
+    
     std_devs = np.sqrt(np.diag(cov_matrix))
+
+    print("Part 4")
+    
     spearman_corr = cov_matrix / np.outer(std_devs, std_devs)
 
+    print("Part 5")
+    
     # Convert the correlation matrix to a DataFrame
     spearman_corr_df = pd.DataFrame(spearman_corr, columns=column_names, index=column_names)
+
+    print("Part 6")
     
     return spearman_corr_df
 
