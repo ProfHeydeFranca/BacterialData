@@ -10,6 +10,7 @@ import numpy as np
 import datetime
 import numpy as np
 from scipy.stats import rankdata
+from scipy.stats import spearmanr
 
 #Get feature from command line
 if len(sys.argv) < 3:
