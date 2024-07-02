@@ -28,12 +28,12 @@ print("Started script! Loading input file...", datetime.datetime.now())
 #file1 = '/home/bia/Documents/bacterial_phenotypes/connecting_features_abFactors/df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'  
 file1 = '/work/groups/VEO/shared_data/bia_heyde/df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'  
 #Output
-#file2 = '/home/bia/Documents/BacterialData/run_features/oxygen/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'
-file2 = '/work/no58rok/BacterialData/run_features/oxygen/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'
-#file3 = '/home/bia/Documents/BacterialData/run_features/oxygen/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.png' 
-file3 = '/work/no58rok/BacterialData/run_features/oxygen/figures/spearman_corr_df_' + abiotic_factor + '_'  + feature + '_selected-filterNA.png' 
-#file4 = '/home/bia/Documents/BacterialData/run_features/oxygen/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA_0.10gap.png'
-file4 = '/work/no58rok/BacterialData/run_features/oxygen/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA_0.10gap.png'
+#file2 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'
+file2 = '/work/no58rok/BacterialData/run_features/' + abiotic_factor + '/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'
+#file3 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.png' 
+file3 = '/work/no58rok/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_'  + feature + '_selected-filterNA.png' 
+#file4 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA_0.10gap.png'
+file4 = '/work/no58rok/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA_0.10gap.png'
 
 with zstandard.open(file1, 'rb') as f:
 	df = pickle.load(f)
