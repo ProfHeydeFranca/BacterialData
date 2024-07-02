@@ -83,11 +83,11 @@ print("Calculating Spearman correlation...", datetime.datetime.now())
 
 #Function to calculate Spearman's rank correlation using numpy
 def spearman_correlation(data):
-
-    print("Part 1")
     
     # Save column names
     column_names = data.columns
+
+    print("Part 1")
     
     # Rank the data
     ranked_data = np.apply_along_axis(rankdata, 0, data)
@@ -98,23 +98,31 @@ def spearman_correlation(data):
     ranked_data -= ranked_data.mean(axis=0)  # Center the data by subtracting the mean
 
     print("Part 3")
-    
-    cov_matrix = np.dot(ranked_data.T, ranked_data) / (ranked_data.shape[0] - 1)
+    #print("Part 3", ranked_data[0:3])
+    print("Part 3.1")
 
-    print("Part 3")
+    tmp = np.dot(ranked_data.T, ranked_data)
+
+    print("Part 3.2")
+
+    cov_matrix = tmp / (ranked_data.shape[0] - 1)
+    
+#    cov_matrix = np.dot(ranked_data.T, ranked_data) / (ranked_data.shape[0] - 1)
+
+    print("Part 4", cov_matrix[0:3], ranked_data.shape[0])
     
     std_devs = np.sqrt(np.diag(cov_matrix))
 
-    print("Part 4")
+    print("Part 5")
     
     spearman_corr = cov_matrix / np.outer(std_devs, std_devs)
 
-    print("Part 5")
+    print("Part 6")
     
     # Convert the correlation matrix to a DataFrame
     spearman_corr_df = pd.DataFrame(spearman_corr, columns=column_names, index=column_names)
 
-    print("Part 6")
+    print("Part 7")
     
     return spearman_corr_df
 
