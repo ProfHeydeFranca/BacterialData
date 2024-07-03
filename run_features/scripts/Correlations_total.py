@@ -149,17 +149,17 @@ print("Calculating Spearman correlation...", datetime.datetime.now())
 dX = dd.from_pandas(X, npartitions=10)
 
 #Generate correlation matrix using Pearson - is working ############ START
-#corr_matrix = np.zeros((X.shape[1],X.shape[1]))
-#corr_matrix = dX.corr(method='pearson')
-#corr_matrix = corr_matrix.compute()
+corr_matrix = np.zeros((X.shape[1],X.shape[1]))
+corr_matrix = dX.corr(method='pearson')
+corr_matrix = corr_matrix.compute()
 #Generate correlation matrix using Pearson - is working ############ END
 
 # Step 2: Compute Spearman correlation using Dask
 
 
 # Convert to Pandas DataFrame
-column_names = X.columns
-correlation_matrix = pd.DataFrame(corr_matrix, columns=column_names, index=column_names)
+#column_names = X.columns
+#correlation_matrix = pd.DataFrame(corr_matrix, columns=column_names, index=column_names)
 
 
 
