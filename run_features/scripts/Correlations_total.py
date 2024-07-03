@@ -10,6 +10,8 @@ import numpy as np
 import datetime
 from scipy.stats import rankdata
 from scipy.stats import spearmanr
+#import xarray as xr
+#import bottleneck
 
 import dask.dataframe as dd
 
@@ -26,15 +28,15 @@ print()
 print("Started script! Loading input file...", datetime.datetime.now())
  
 #Input
-file1 = '/home/bia/Documents/bacterial_phenotypes/connecting_features_abFactors/df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'  
-#file1 = '/work/groups/VEO/shared_data/bia_heyde/df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'  
+#file1 = '/home/bia/Documents/bacterial_phenotypes/connecting_features_abFactors/df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'  
+file1 = '/work/groups/VEO/shared_data/bia_heyde/df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'  
 #Output
-file2 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'
-#file2 = '/work/no58rok/BacterialData/run_features/' + abiotic_factor + '/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'
-file3 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.png' 
-#file3 = '/work/no58rok/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_'  + feature + '_selected-filterNA.png' 
-file4 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA_0.10gap.png'
-#file4 = '/work/no58rok/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA_0.10gap.png'
+#file2 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'
+file2 = '/work/no58rok/BacterialData/run_features/' + abiotic_factor + '/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'
+#file3 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.png' 
+file3 = '/work/no58rok/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_'  + feature + '_selected-filterNA.png' 
+#file4 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA_0.10gap.png'
+file4 = '/work/no58rok/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA_0.10gap.png'
 
 with zstandard.open(file1, 'rb') as f:
 	df = pickle.load(f)
@@ -146,10 +148,14 @@ print("Calculating Spearman correlation...", datetime.datetime.now())
 # Convert X to Dask DataFrame
 dX = dd.from_pandas(X, npartitions=10)
 
-#Generate correlation matrix
-corr_matrix = np.zeros((X.shape[1],X.shape[1]))
-corr_matrix = dX.corr(method='pearson')
-corr_matrix = corr_matrix.compute()
+#Generate correlation matrix using Pearson - is working ############ START
+#corr_matrix = np.zeros((X.shape[1],X.shape[1]))
+#corr_matrix = dX.corr(method='pearson')
+#corr_matrix = corr_matrix.compute()
+#Generate correlation matrix using Pearson - is working ############ END
+
+# Step 2: Compute Spearman correlation using Dask
+
 
 # Convert to Pandas DataFrame
 column_names = X.columns
