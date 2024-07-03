@@ -8,13 +8,10 @@ import zstandard
 import pandas as pd
 import numpy as np
 import datetime
-import numpy as np
 from scipy.stats import rankdata
 from scipy.stats import spearmanr
 
-#import dask.dataframe as dd
-#import dask.array as da
-#import dask.bag as db
+import dask.dataframe as dd
 
 #Get feature from command line
 if len(sys.argv) < 3:
@@ -29,15 +26,15 @@ print()
 print("Started script! Loading input file...", datetime.datetime.now())
  
 #Input
-#file1 = '/home/bia/Documents/bacterial_phenotypes/connecting_features_abFactors/df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'  
-file1 = '/work/groups/VEO/shared_data/bia_heyde/df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'  
+file1 = '/home/bia/Documents/bacterial_phenotypes/connecting_features_abFactors/df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'  
+#file1 = '/work/groups/VEO/shared_data/bia_heyde/df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'  
 #Output
-#file2 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'
-file2 = '/work/no58rok/BacterialData/run_features/' + abiotic_factor + '/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'
-#file3 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.png' 
-file3 = '/work/no58rok/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_'  + feature + '_selected-filterNA.png' 
-#file4 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA_0.10gap.png'
-file4 = '/work/no58rok/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA_0.10gap.png'
+file2 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'
+#file2 = '/work/no58rok/BacterialData/run_features/' + abiotic_factor + '/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'
+file3 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.png' 
+#file3 = '/work/no58rok/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_'  + feature + '_selected-filterNA.png' 
+file4 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA_0.10gap.png'
+#file4 = '/work/no58rok/BacterialData/run_features/' + abiotic_factor + '/figures/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA_0.10gap.png'
 
 with zstandard.open(file1, 'rb') as f:
 	df = pickle.load(f)
@@ -135,19 +132,33 @@ print("Calculating Spearman correlation...", datetime.datetime.now())
 
 #Prepare data using DASK###############################################
 
-#Convert to Dask DataFrame ###########################
-#dX = dd.from_pandas(X, npartitions=10)
-
 #Calculate Spearman correlation of numpy array
-X_array = X.values
-corr, _ = spearmanr(X_array) #- trying with numpy array as input to function 
-#corr, _ = spearmanr(X) - this single line takes too much memory 
-#corr, _ = spearmanr(dX)
-#corr = corr.compute()
 
-# Convert to DataFrame
+#Original line, scipy.stats.spearmanr with pandas df - takes too much memory 
+#corr, _ = spearmanr(X)
+
+#Same as above, but numpy array as input to function - improvement in memory and speed is very small
+#X_array = X.values
+#corr, _ = spearmanr(X_array) 
+
+#Convert to Dask DataFrame ###########################
+
+# Convert X to Dask DataFrame
+dX = dd.from_pandas(X, npartitions=10)
+
+#Generate correlation matrix
+corr_matrix = np.zeros((X.shape[1],X.shape[1]))
+corr_matrix = dX.corr(method='pearson')
+corr_matrix = corr_matrix.compute()
+
+# Convert to Pandas DataFrame
 column_names = X.columns
-correlation_matrix = pd.DataFrame(corr, columns=column_names, index=column_names)
+correlation_matrix = pd.DataFrame(corr_matrix, columns=column_names, index=column_names)
+
+
+
+
+
 
 ############################
 
