@@ -10,9 +10,9 @@ import numpy as np
 import datetime
 from scipy.stats import rankdata
 from scipy.stats import spearmanr
-#import xarray as xr
-#import bottleneck
-#import dask.dataframe as dd
+import xarray as xr
+import bottleneck
+import dask.dataframe as dd
 
 #Get feature from command line
 if len(sys.argv) < 3:
@@ -138,13 +138,15 @@ print("Calculating Spearman correlation...", datetime.datetime.now())
 #Original line, scipy.stats.spearmanr with pandas df - takes too much memory 
 #corr_matrix, _ = spearmanr(X)
 
+#WORKING VERSION #######################################################################################START - Just takes too much mem kmers
 #Same as above, but numpy array as input to function - improvement in memory and speed is very small
-X_array = X.values
-corr_matrix, _ = spearmanr(X_array) 
+#X_array = X.values
+#corr_matrix, _ = spearmanr(X_array) 
 
 # Convert to Pandas DataFrame
-column_names = X.columns
-correlation_matrix = pd.DataFrame(corr_matrix, columns=column_names, index=column_names)
+#column_names = X.columns
+#correlation_matrix = pd.DataFrame(corr_matrix, columns=column_names, index=column_names)
+#WORKING VERSION #######################################################################################END - Just takes too much mem kmers
 
 #Convert to Dask DataFrame ###########################
 
@@ -154,13 +156,24 @@ correlation_matrix = pd.DataFrame(corr_matrix, columns=column_names, index=colum
 #corr_matrix = corr_matrix.compute()
 #Generate correlation matrix using Pearson -takes too long ############ END
 
-# Convert X to Dask DataFrame
+# Convert X to Dask DataFrame#############################################
+#https://docs.xarray.dev/en/stable/user-guide/dask.html
 #dX = dd.from_pandas(X, npartitions=10)
 
 # Step 2: Compute Spearman correlation using Dask
 
 # Step 1: Convert Pandas DataFrame to xarray.DataArray
-#data_array = xr.DataArray(X)
+
+#X = X.T
+
+#print("X head")
+#print(X.head())
+
+#array1 = xr.DataArray(X)
+#array2 = xr.DataArray(X)
+
+#print("Array")
+#print(array1[0:10])
 
 #chunked1 = array1.chunk({'place': 10})
 #chunked2 = array2.chunk({'place': 10})
@@ -186,12 +199,20 @@ correlation_matrix = pd.DataFrame(corr_matrix, columns=column_names, index=colum
 
 #corr_matrix = spearman_correlation(chunked1, chunked2).compute()
 # Step 4: Compute Spearman correlation matrix
-#corr_matrix = spearman_correlation(data_array, data_array, ).compute()
-
+#corr_matrix = spearman_correlation(array1, array2, "dim_1").compute()
+#print(len(corr_matrix))
+#print(corr_matrix.shape)
+#print(corr_matrix.head())
 
 # Convert to Pandas DataFrame
 #column_names = X.columns
 #correlation_matrix = pd.DataFrame(corr_matrix, columns=column_names, index=column_names)
+
+############################################
+
+
+##########################################
+
 
 ############################
 
