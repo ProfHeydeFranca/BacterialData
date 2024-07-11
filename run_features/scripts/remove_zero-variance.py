@@ -36,7 +36,8 @@ group = pre_group.replace('_', ' ')
 
 f1_df = pd.DataFrame()
 
-path = '/home/bia/Documents/BacterialData/run_features/benchmark_low-variance_threshold/df_'
+#path = '/home/bia/Documents/BacterialData/run_features/benchmark_low-variance_threshold/df_'
+path = '/work/no58rok/BacterialData/run_features/benchmark_low-variance_threshold/df_'
 
 #Loop for different thresholds for filtering low-variance
 for i in np.arange(0, 0.011, 0.001):  
