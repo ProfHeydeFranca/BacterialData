@@ -24,7 +24,7 @@ print()
 print("Started script! Loading input file...", datetime.datetime.now())
  
 #Input
-file1 = '/home/bia/Documents/BacterialData/run_features/benchmark_low-variance_threshold/df_' + abiotic_factor + '_' + feature + '_0.001.pickle.zst'  
+file1 = '/home/bia/Documents/BacterialData/run_features/benchmark_low-variance_threshold/df_' + abiotic_factor + '_' + feature + '_0.002.pickle.zst'  
 #file1 = '/work/groups/VEO/shared_data/bia_heyde/df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'  
 #Output
 file2 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_selected-filterNA.pickle.zst'
@@ -39,8 +39,6 @@ with zstandard.open(file1, 'rb') as f:
 
 #Prepare data##########################################################
 
-print(" Shape of the input dataframe:", df.shape)
-
 # Separar as features (X) e o grupos (y)
 #Full dataset:
 X = df.iloc[:, :-1]  
@@ -51,6 +49,27 @@ print(" Any NAs in the dataframe?", X.isnull().any().any() )
 
 #Make plot title (plot is below)
 plot_title = 'Correlation of prokaryotes\' ' + feature + ' (' + abiotic_factor + '), n = ' + str(len(X.columns))
+
+#Remove low variance features ########################################
+
+#IMPORTANT: the low-variance features have been previously filtered in step of the pipeline "Remove low-variance features"
+#Therefore, for Regression problems, this step is not necessary. 
+#However, for classification problems, further isolates are also removed, increasing the number of zero-variance features
+print("Remove zero-variance features (should make a difference for Classification only)!")
+
+#Calculate variance for each feature/column of all features
+variances = X.var()
+
+#Get list of columns with variance smaller or equal to i
+zero_variance_columns = variances[variances <= low_var_threshold].index
+
+#Drop low-variance features
+X = X.drop(columns=zero_variance_columns)
+
+print(" Shape of filtered dataframe:", X.shape)
+print(" Any NAs in the dataframe?", X.isnull().any().any() )
+
+#Remove low variance features ########################################
 
 #Calculate Spearman correlation########################################
 
