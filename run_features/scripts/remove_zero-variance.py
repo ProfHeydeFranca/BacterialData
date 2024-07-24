@@ -27,7 +27,7 @@ pre_group = sys.argv[3]
 group = pre_group.replace('_', ' ')
 
 #REGRESSION #########################################
-#CHANGE LINE BELOW  TO FIT GENE FAMILIES OR KMERS
+#CHANGE RANGE BELOW TO FIT GENE FAMILIES OR KMERS
 
 #For different scoring of cross_validate, check: https://scikit-learn.org/stable/modules/model_evaluation.html#scoring-parameter "Regression"
 #For the output of cross_validate: https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.cross_validate.html
@@ -37,11 +37,11 @@ group = pre_group.replace('_', ' ')
 f1_df = pd.DataFrame()
 
 #path = '/home/bia/Documents/BacterialData/run_features/benchmark_low-variance_threshold/df_'
-path = '/work/no58rok/BacterialData/run_features/benchmark_low-variance_threshold/df_'
+path = '/vast/no58rok/BacterialData/run_features/benchmark_low-variance_threshold/df_'
 
 #Loop for different thresholds for filtering low-variance
-for i in np.arange(0, 0.011, 0.001):  
-#for i in np.arange(0, 0.0021, 0.0001):  
+#for i in np.arange(0, 0.011, 0.001):  
+for i in np.arange(0, 0.0021, 0.0002):  
         
     with zstandard.open(path + abiotic_factor + '_' + 
                         feature + '_' + str(i) + '.pickle.zst', 'rb') as f: 
@@ -91,4 +91,4 @@ for i in np.arange(0, 0.011, 0.001):
     f1_df[i] = list_means
 
 #Save benchmark results to a CSV file
-f1_df.to_csv(path + 'f1_benchmark_' + abiotic_factor + '_' + feature + '.csv', index=True)
+f1_df.to_csv(path + 'mae_benchmark_' + abiotic_factor + '_' + feature + '.csv', index=True)
