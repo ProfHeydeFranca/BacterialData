@@ -1,11 +1,18 @@
 #After calculating correlations between genomic features, this script groups features that have a correlation higher than 0.9
-#It outputs a df_salt/df_oxygen dataframe such as the one below
+#It outputs a df_abiotic_factor dataframe such as the one below
 #From feature_selection.ipynb
 
 #Best assembly	COG0606@2	33SZW@2,33UZ0@2,2ZFEM@2,33E1D@2,34282@2,33QA2@2,COG2385@1,32DYM@2	COG0774@1	Target																			
 #1002367.3	0.00	1.00	1.00	anaerobe
 #108980.91	0.00	0.00	0.00	aerobe
 #1111140.3	1.00	0.00	0.00	aerobe
+
+#group = 'Salinity group'
+#group = 'Salt all mean'
+#group = 'Temp group'
+#group = 'Temp all mean'
+#group = 'pH all mean'
+#group = 'Oxygen tolerance'
 
 import sys
 import pickle
@@ -14,25 +21,45 @@ import datetime
 import pandas as pd
 import numpy as np
 
+import warnings
+warnings.filterwarnings('ignore')
+
 #Get feature from command line
-if len(sys.argv) < 2:
-    print("Usage: python script.py <feature>")
+if len(sys.argv) < 4:
+    print("Usage: python script.py <feature> <abiotic_factor> <low_var_threshold_and_chunk> <abiotic_group>")
     sys.exit(1)
 
 feature = sys.argv[1]
+abiotic_factor = sys.argv[2]
+pre_low_var_threshold = sys.argv[3]
+pre_abiotic_group = sys.argv[4]
+#low_var_threshold can be '0.001' for gene-families, or '0.0002_chunk1' for kmer9 that were split into chunks
+
+#Replace '_' for spaces in abiotic_group
+abiotic_group = pre_abiotic_group.replace('_', ' ')
+
+#Check if string contains '_chunk'. If so, split the string
+if '_chunk' in pre_low_var_threshold:
+    #Split the string
+    split_result = pre_low_var_threshold.split('_chunk')
+    low_var_threshold = split_result[0]
+else:
+    low_var_threshold = pre_low_var_threshold
 
 print()
 
 print("Started script! Loading input files...", datetime.datetime.now())
 
 #Input
-file1 = '/work/groups/VEO/shared_data/bia_heyde/df_oxygen_' + feature + '_selected-filterNA.pickle.zst'
-#file1 = '/home/bia/Documents/bacterial_phenotypes/connecting_features_abFactors/df_oxygen_' + feature + '_selected-filterNA.pickle.zst'
-file2 = '/work/no58rok/BacterialData/oxygen/data/spearman_corr_df_oxygen_' + feature + '_selected-filterNA.pickle.zst'
-#file2 = '/home/bia/Documents/BacterialData/oxygen/data/spearman_corr_df_oxygen_' + feature +  '_selected-filterNA.pickle.zst'
+file1 = '/home/bia/Documents/BacterialData/run_features/benchmark_low-variance_threshold/df_' + abiotic_factor + '_' + feature + '_' + pre_low_var_threshold + '.pickle.zst'  
+#file1 = '/vast/no58rok/BacterialData/run_features/benchmark_low-variance_threshold/df_' + abiotic_factor + '_' + feature + '_' + pre_low_var_threshold + '.pickle.zst' 
+
+file2 = '/home/bia/Documents/BacterialData/run_features/' + abiotic_factor + '/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_' + pre_low_var_threshold + '.pickle.zst'
+#file2 = '/vast/no58rok/BacterialData/run_features/' + abiotic_factor + '/data/spearman_corr_df_' + abiotic_factor + '_' + feature + '_' + pre_low_var_threshold + 'pickle.zst'
+
 #Output
-file3 = '/work/no58rok/BacterialData/oxygen/data/Oxygen_' + feature +  '_Features_Corr_Spearman_with_Target.pickle.zst'
-#file3 = '/home/bia/Documents/BacterialData/oxygen/data/Oxygen_' + feature +  '_Features_Corr_Spearman_with_Target.pickle.zst'
+file3 = '/home/bia/Documents/BacterialData/run_features/benchmark_low-variance_threshold/df_' + abiotic_factor + '_' + feature + '_' + pre_low_var_threshold + 'joined.pickle.zst'  
+#file3 = '/vast/no58rok/BacterialData/run_features/benchmark_low-variance_threshold/df_' + abiotic_factor + '_' + feature + '_' + pre_low_var_threshold + 'joined.pickle.zst' 
 
 with zstandard.open(file1, 'rb') as f:
 #with zstandard.open(file2, 'rb') as f:
@@ -115,7 +142,7 @@ y = df.iloc[:, -1]  # Última coluna
 #Get shape without target!
 print(" Shape of the output dataframe dados_agrupados_df:", dados_agrupados.shape)
 
-dados_agrupados['Target'] = y
+dados_agrupados[abiotic_group] = y
 
 print("Saving file...", file3, datetime.datetime.now())
 
