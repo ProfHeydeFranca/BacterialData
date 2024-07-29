@@ -13,6 +13,9 @@ from sklearn.model_selection import cross_validate
 import statistics
 from sklearn.ensemble import RandomForestRegressor
 
+#group = 'Salt_all_mean'
+#group = 'Temp_all_mean'
+#group = 'pH_all_mean'
 
 #Get feature from command line
 if len(sys.argv) < 4:
@@ -36,11 +39,11 @@ group = pre_group.replace('_', ' ')
 
 f1_df = pd.DataFrame()
 
-#path = '/home/bia/Documents/BacterialData/run_features/benchmark_low-variance_threshold/df_'
-path = '/vast/no58rok/BacterialData/run_features/benchmark_low-variance_threshold/df_'
+path = '/home/bia/Documents/BacterialData/run_features/benchmark_low-variance_threshold/df_'
+#path = '/vast/no58rok/BacterialData/run_features/benchmark_low-variance_threshold/df_'
 
 #Loop for different thresholds for filtering low-variance
-#for i in np.arange(0, 0.011, 0.001):  
+#for i in np.arange(0.011, 0.016, 0.001):  
 for i in np.arange(0, 0.0021, 0.0002):  
         
     with zstandard.open(path + abiotic_factor + '_' + 
