@@ -72,7 +72,7 @@ for i in np.arange(0, 0.0021, 0.0002):
         clf = RandomForestRegressor()
 
         scoring = 'neg_mean_absolute_error'
-        output = cross_validate(clf, X_train, y_train, cv=5, scoring=scoring, return_train_score=False, return_estimator =True)
+        output = cross_validate(clf, X_train, y_train, cv=5, scoring=scoring, return_train_score=False, return_estimator=True, n_jobs=15)
         #print(output)
         #{'fit_time': array([57.96, 62.67, 56.21, 67.85, 60.65]), 'score_time': array([0.05, 0.05, 0.05, 0.05, 0.05]), 
         #'estimator': [RandomForestRegressor(), RandomForestRegressor(), RandomForestRegressor(), RandomForestRegressor(), RandomForestRegressor()], 
@@ -89,6 +89,9 @@ for i in np.arange(0, 0.0021, 0.0002):
 
     #Add new values
     f1_df[i] = list_means
+    
+    #Save benchmark results to a CSV file
+    f1_df.to_csv(path + 'mae_benchmark_' + abiotic_factor + '_' + feature + '.csv', index=True)
 
 #Save benchmark results to a CSV file
 f1_df.to_csv(path + 'mae_benchmark_' + abiotic_factor + '_' + feature + '.csv', index=True)
