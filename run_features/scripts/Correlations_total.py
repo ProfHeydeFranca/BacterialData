@@ -1,3 +1,6 @@
+#UPDATE: Last version at feature_selection-development-only ipynb
+#################################################################
+
 #From feature_selection-development-only.ipynb
 #This script calculates Spearman correlations between genomic features
 #The input is the output of filtering based on variance
