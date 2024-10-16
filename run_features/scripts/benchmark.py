@@ -140,7 +140,7 @@ for i in np.arange(0.65, 0.99, 0.05):
     f1_df[i] = list_means
     
     #Save benchmark results to a CSV file
-    f1_df.to_csv(file_out_filtered + '_' + str(i) + '_' + 'MAE_benchmarking.csv', index=True)
+    f1_df.to_csv(file_out_filtered + '_' + 'MAE_benchmarking.csv', index=True)
 
 #Save benchmark results to a CSV file
-f1_df.to_csv(file_out_filtered + '_' + str(i) + '_' + 'MAE_benchmarking.csv', index=True)
+f1_df.to_csv(file_out_filtered + '_' + 'MAE_benchmarking.csv', index=True)
