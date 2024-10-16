@@ -46,7 +46,7 @@ group = 'Salt all mean'
 var_filter = '0.0014' #salt Reg kmer9
 
 #Input
-path = '../benchmark_low-variance_threshold/'
+path = '../benchmark_low-variance_threshold/chosen_filters/'
 file = path + 'df_' + abiotic_factor + '_' + feature + '_' + var_filter + '.pickle.zst'  
 
 path_out = '../join_highly_correlated/'
