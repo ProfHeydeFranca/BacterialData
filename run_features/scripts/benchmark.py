@@ -23,27 +23,41 @@ from sklearn.ensemble import RandomForestRegressor
 print()
 print("Started script! Loading input file...", datetime.datetime.now())
 
-#Define variables
+#Get input variables from command line
+if len(sys.argv) < 4:
+    print("Usage: python script.py <feature> <abiotic_factor> <group> <var_filter>")
+    sys.exit(1)
+
+feature = sys.argv[1]
+abiotic_factor = sys.argv[2]
+pre_group = sys.argv[3]
+pre_var_filter = sys.argv[4]
+
+#Replace '_' for spaces in abiotic_group
+group = pre_group.replace('_', ' ')
+var_filter = str(pre_var_filter)
+
+#Example variables:
 #feature = 'kmer9Classification'
-feature = 'kmer9Regression'
+#feature = 'kmer9Regression'
 #feature = 'gene-familiesClassification'
 #feature = 'gene-familiesRegression'
 #feature = 'gene-families'
 #feature = 'kmer9'
 
-abiotic_factor = 'salt'
+#abiotic_factor = 'salt'
 #abiotic_factor = 'temperature'
 #abiotic_factor = 'pH'
 #abiotic_factor = 'oxygen'
 
 #Define target group:
-#group = 'Salinity group'
-group = 'Salt all mean'
+#group = 'Salinity_group'
+#group = 'Salt_all_mean'
 
 #var_filter = '0.009000000000000001final-filtering' #salt Class GF
 #var_filter = '0.001' #salt Reg GF
 #var_filter = '0.001final-filtering' #salt Class kmer9
-var_filter = '0.0014' #salt Reg kmer9
+#var_filter = '0.0014' #salt Reg kmer9
 
 #Input
 path = '../benchmark_low-variance_threshold/chosen_filters/'
