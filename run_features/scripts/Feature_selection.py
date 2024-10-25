@@ -24,7 +24,7 @@
 ##############################################################################################################################################################
 
 import pandas as pd
-import os,csv,argparse,time
+import vim 
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -58,7 +58,7 @@ parser.add_argument("-y","--target", help="Which column/feature shoud the select
 # If false, the selection will run on the rows 
 parser.add_argument("--columnwise", help="Do you want columns or rows to be selected??",action="store_false",default=True)
 ## Specify a prefix for every output!!
-parser.add_argument("--settype", help="Is there a specific name that you need??",nargs="?",type=str,default='Sinkhole')
+parser.add_argument("--settype", help="Is there a specific name that you need??",nargs="?",type=str,default='abiotic_factors')
 # Do we need a specific separator for your table(s)??
 parser.add_argument("--separator", help="Do you want columns or rows to be selected??",default=';')
 
@@ -208,7 +208,7 @@ if args.method:
     plt.title('Feature Importance')
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
-    plt.savefig(f'{outdir}Imprortance_{args.method}{settype}.png')
+    plt.savefig(f'{outdir}Importance_{args.method}{settype}.png')
 
 
 # If you didn't select a method, we're gonna run them all!!
@@ -242,7 +242,7 @@ else:
         plt.title(f'Feature Importance {method}')
         plt.xticks(rotation=45, ha='right')
         plt.tight_layout()
-        plt.savefig(f'{outdir}Imprortance_{method}{settype}.png')
+        plt.savefig(f'{outdir}Importance_{method}{settype}.png')
         # Print the progress of the algorithm
         print (f'Done with {method}')
     # Save the tsv of ALL important features
