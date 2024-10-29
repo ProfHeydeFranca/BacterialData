@@ -131,7 +131,7 @@ def perform_feature_selection(method, X, y,max_features):
     return  top_k_features, top_k_indices, importance if method!='L2' else  np.argsort(importance)[::-1][0,:], elapsed_time
 
 # Set all methods
-methods = ['Lasso', 'RFE', 'L2', 'tree-based']#, 'sequential-forward']
+methods = ['Lasso', 'RFE', 'L2', 'tree-based', 'sequential-forward']
 # Define label encoder
 label_encoder = LabelEncoder()
 ##############################################################################################################################################################
