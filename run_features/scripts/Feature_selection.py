@@ -18,6 +18,43 @@
 ######    O2005269	7
 ######    O2005270	2
 
+'''
+NOTE for usage
+Lasso if not converge --> GPU (numerical instability)
+'''
+
+'''
+ABOUT IMPORTANCES
+
+
+Sequencial forward NOT YET implemented. PLEASE CONTACT ARIS FIRST, before using it
+
+RFE Importance is not A METRIC OF IMPORTANCE. RFE ranks the features based on when (and if) they got eliminated. 
+    The metric here is the 1/ranking. Meaning that importance of 1 have all the features that NEVER got eliminated and are the most important.
+    0.5 is the metric for the LAST eliminated feature, followed by 0.33 etc. 
+    The model that is tested to select the features is a decision tree, that internally uses the Gini criterion of information gain to make decisions.
+    If needed, contact me to assess the importances of the tree(s).
+
+L2 importances are the absolute coefficients that SVM(C or R) assigns.
+
+Lasso importances are based on Linear (or Logistic) regression.
+
+Tree-based importances are the importances that RANDOM FOREST assigns to the features. 
+    How high a feature is selected in all trees of the forest.
+'''
+
+
+'''
+ABOUT METHODS
+
+RFE: Recursive Feature Elimination
+    Starts with all features and starts eliminating (and testing a model) one by one up to the max_features argument.
+
+
+tree-based:
+    Starts from 1 feature. Evaluates the next feature based on the information gain GIVEN the previous.
+    
+'''
 
 ##############################################################################################################################################################
 ###################################################  IMPORTING NECESSARY LIBRARIES  ##########################################################################
@@ -28,7 +65,7 @@ import os,csv,argparse,time
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.feature_selection import SelectFromModel, RFE, SequentialFeatureSelector
+from sklearn.feature_selection import SelectFromModel, RFECV, SequentialFeatureSelector
 from sklearn.linear_model import Lasso,LogisticRegression
 from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
 from sklearn.tree import DecisionTreeClassifier
@@ -44,23 +81,23 @@ import seaborn as sns
 parser = argparse.ArgumentParser()
 # Argument for the big table
 ### Big table should have column AND row names
-parser.add_argument("-t","--bigtable", help="Where is the bigtable??",type=str,nargs="?",default='/home/arislit/Time-series_data/Feature_selection_test_table.csv')#/home/arislit/Downloads/Feature_selection_Jose/all_table.tsv 
+parser.add_argument("-t","--bigtable", help="Where is the bigtable??",type=str,nargs="?",default='/home/arislit/Downloads/Feature_selection_Bia/df_salt_gene-familiesClassification_0.7.csv')#/home/arislit/Downloads/Feature_selection_Jose/all_table.tsv 
 # Argument for the method that you want
 # If empty, the script will run all: Lasso, RFE, L1, tree-based, or sequential-forward
-parser.add_argument("-m","--method", help="One of Lasso, RFE, L2, tree-based, or sequential-forward??",nargs="?",type=str,default='')
+parser.add_argument("-m","--method", help="One of Lasso, RFE, L2, tree-based, or sequential-forward??",nargs="?",type=str,default='tree-based')
 # How many features should we keep (maximum)
-parser.add_argument("-f","--max_features", help="Number of maximum features to select",nargs="?",type=int,default=100)
+parser.add_argument("-f","--max_features", help="Number of maximum features to select",nargs="?",type=int,default=10000)
 # Where are we saving the outputs??
-parser.add_argument("-o","--outdir", help="Where should I save the features??",nargs="?",type=str,default='/home/arislit/Downloads/') #/Feature_selection_Jose
+parser.add_argument("-o","--outdir", help="Where should I save the features??",nargs="?",type=str,default='/home/arislit/Downloads/Feature_selection_Bia') #/Feature_selection_Jose
 # Which column (or row if columnwise) should the selection be based on? 
 ### Requires a table with a header (columnnames) or rownames if columnwise
-parser.add_argument("-y","--target", help="Which column/feature shoud the selection be based on??\n Can be the path of a csv/tsv",nargs="?",type=str,default='/home/arislit/Time-series_data/Feature_selection_test_target.csv') 
+parser.add_argument("-y","--target", help="Which column/feature shoud the selection be based on??\n Can be the path of a csv/tsv",nargs="?",type=str,default='Salinity group') 
 # If false, the selection will run on the rows 
 parser.add_argument("--columnwise", help="Do you want columns or rows to be selected??",action="store_false",default=True)
 ## Specify a prefix for every output!!
-parser.add_argument("--settype", help="Is there a specific name that you need??",nargs="?",type=str,default='abiotic_factors')
+parser.add_argument("--settype", help="Is there a specific name that you need??",nargs="?",type=str,default='Salt_Bia')
 # Do we need a specific separator for your table(s)??
-parser.add_argument("--separator", help="Do you want columns or rows to be selected??",default=';')
+parser.add_argument("--separator", help="Do you want columns or rows to be selected??",default=',')
 
 
 
@@ -75,7 +112,7 @@ models={
     # If the target variable is continuous, we go here
     'regression':{ 
         'Lasso': Lasso(),
-        'RFE': RFE(estimator=DecisionTreeClassifier(), n_features_to_select=args.max_features),
+        'RFE': RFECV(estimator=DecisionTreeClassifier(), min_features_to_select=1,cv=10),
         'L2': SVR(C=1.0,kernel='linear'),
         'tree-based': RandomForestRegressor(n_estimators=100)
     
@@ -84,8 +121,8 @@ models={
     'classification':{
         'tree-based': RandomForestClassifier(),
         'sequential-forward': SequentialFeatureSelector(DecisionTreeClassifier(), n_features_to_select='best', direction='forward'),
-        'Lasso': LogisticRegression(penalty='l1', solver='liblinear'),
-        'RFE': RFE(estimator=DecisionTreeClassifier(), n_features_to_select=args.max_features),  # Example estimator
+        'Lasso': Lasso(),
+        'RFE': RFECV(estimator=DecisionTreeClassifier(), min_features_to_select=1,cv=10),
         'L1': SVC(kernel='linear'),
     }
 }
@@ -93,8 +130,8 @@ models={
 # Setting a unified way to extract the feature importance
 feature_importance_methods = {
     'Lasso': lambda model: np.abs(model.coef_),
-    'RFE': lambda selector: selector.ranking_,
-    'L2': lambda model: np.abs(model.coef_),  
+    'RFE': lambda selector: 1/selector.ranking_,
+    'L2': lambda model: np.abs(model.coef_)[0,:],  
     'tree-based': lambda model: model.feature_importances_
     # Add more methods as needed
 }
@@ -120,7 +157,8 @@ def perform_feature_selection(method, X, y,max_features):
     # Extract the importance
     importance=feature_importance_methods[method](model)
     # Select the top k indexes
-    top_k_indices = np.argsort(importance)[::-1][:max_features] if method!='L2' else  np.argsort(importance)[::-1][0,:][:max_features] 
+    print (np.argsort(importance)[::-1])
+    top_k_indices = np.argsort(importance)[::-1][:max_features] #if method!='L2' else  np.argsort(importance)[::-1][0,:][:max_features] 
     # Select the top k features by the top k indexes
     top_k_features = list(set([X.columns[i] for i in top_k_indices]))
     # Stop timer
@@ -128,10 +166,10 @@ def perform_feature_selection(method, X, y,max_features):
     # Calculate the time used
     elapsed_time = end_time - start_time
 
-    return  top_k_features, top_k_indices, importance if method!='L2' else  np.argsort(importance)[::-1][0,:], elapsed_time
+    return  top_k_features, top_k_indices, importance,elapsed_time #if method!='L2' else  np.argsort(importance)[::-1][0,:], elapsed_time
 
 # Set all methods
-methods = ['Lasso', 'RFE', 'L2', 'tree-based', 'sequential-forward']
+methods = ['Lasso', 'RFE', 'L2', 'tree-based']#, 'sequential-forward']
 # Define label encoder
 label_encoder = LabelEncoder()
 ##############################################################################################################################################################
@@ -139,7 +177,7 @@ label_encoder = LabelEncoder()
 ##############################################################################################################################################################
 
 
-# Proprerly read the output directory
+# Properly read the output directory
 outdir=args.outdir if args.outdir[-1]=='/' else args.outdir+'/'
 # Read the big table
 with open(args.bigtable, 'r') as csvfile:
@@ -153,6 +191,24 @@ with open(args.bigtable, 'r') as csvfile:
 
 
 bigtable=pd.read_csv(args.bigtable,sep=separator,header=0,index_col=0) if args.columnwise else pd.read_csv(args.bigtable,sep=separator,header=0,index_col=0).T
+'''
+
+
+
+
+
+
+
+'''
+#bigtable=bigtable[list(bigtable.columns)[:500]+[args.target]]
+
+'''
+
+
+
+'''
+
+
 
 if not os.path.isfile(args.target):
     # Find the target variable
@@ -181,7 +237,7 @@ else:
 y_encoded = label_encoder.fit_transform(y)
 
 # Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, test_size=0.2, random_state=99)
+X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, test_size=0.2, random_state=42)
 
 # Set the prefix
 settype='_'+args.settype if args.settype else args.settype
@@ -209,7 +265,7 @@ if args.method:
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
     plt.savefig(f'{outdir}Importance_{args.method}{settype}.png')
-
+    #plt.show()
 
 # If you didn't select a method, we're gonna run them all!!
 else:
@@ -242,7 +298,7 @@ else:
         plt.title(f'Feature Importance {method}')
         plt.xticks(rotation=45, ha='right')
         plt.tight_layout()
-        plt.savefig(f'{outdir}Importance_{method}{settype}.png')
+        plt.savefig(f'{outdir}Imprortance_{method}{settype}.png')
         # Print the progress of the algorithm
         print (f'Done with {method}')
     # Save the tsv of ALL important features
