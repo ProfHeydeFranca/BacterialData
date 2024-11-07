@@ -27,7 +27,7 @@ Lasso if not converge --> GPU (numerical instability)
 ABOUT IMPORTANCES
 
 
-Sequencial forward NOT YET implemented. PLEASE CONTACT ARIS FIRST, before using it
+Sequencial forward NOT YET. PLEASE CONTACT ME FIRST
 
 RFE Importance is not A METRIC OF IMPORTANCE. RFE ranks the features based on when (and if) they got eliminated. 
     The metric here is the 1/ranking. Meaning that importance of 1 have all the features that NEVER got eliminated and are the most important.
@@ -99,6 +99,7 @@ parser.add_argument("--settype", help="Is there a specific name that you need??"
 # Do we need a specific separator for your table(s)??
 parser.add_argument("--separator", help="Do you want columns or rows to be selected??",default=',')
 
+parser.add_argument("--y_type", help="Do you want columns or rows to be selected??",default=',')
 
 
 
@@ -177,7 +178,7 @@ label_encoder = LabelEncoder()
 ##############################################################################################################################################################
 
 
-# Properly read the output directory
+# Proprerly read the output directory
 outdir=args.outdir if args.outdir[-1]=='/' else args.outdir+'/'
 # Read the big table
 with open(args.bigtable, 'r') as csvfile:
@@ -237,7 +238,7 @@ else:
 y_encoded = label_encoder.fit_transform(y)
 
 # Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, test_size=0.2, random_state=42)
+#X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, test_size=0.2, random_state=42)
 
 # Set the prefix
 settype='_'+args.settype if args.settype else args.settype
@@ -245,7 +246,7 @@ settype='_'+args.settype if args.settype else args.settype
 # If you selected a specific method
 if args.method:
     # Perform the feature selection for that method
-    selected_features, selected_indeces, importance, _ = perform_feature_selection(args.method, X_train, y_train,args.max_features)
+    selected_features, selected_indeces, importance, _ = perform_feature_selection(args.method, X, y_encoded,args.max_features)
     # Initialize a dataframe to save the k important features
     importances=pd.DataFrame([])
     # Import the features in the dataframe
@@ -276,7 +277,7 @@ else:
     # Iterate through the methods
     for method in ['Lasso', 'L2', 'tree-based', 'RFE']:
         # Feature selection for a method
-        selected_features, selected_indeces, importance, _ = perform_feature_selection(method, X_train, y_train,args.max_features)
+        selected_features, selected_indeces, importance, _ = perform_feature_selection(method, X, y_encoded,args.max_features)
         # Save the importance values to the dataframe
         for i in range(len(selected_features)):
             sel.loc[selected_features[i],method]=importance[i]
